@@ -28,7 +28,7 @@ public class SystemEntityController {
 								@RequestParam(value = "page",required = false ) String page,
 								@RequestParam(value = "row",required = false) String row) {
 		SystemEntity systemEntity= new SystemEntity();
-		systemEntity.setTestSystemEntiyId(2);
+		systemEntity.setTestSystemEntiyId(2); 
 		return  systemEntityMapper.getSystemEntity(0, 0, systemEntity);
 		
 		
