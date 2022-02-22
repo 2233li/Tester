@@ -1,0 +1,34 @@
+import axios from "axios"
+import {Message} from "element-ui"
+import router from '@//router'
+import {mymessage} from "@/utils/Mymessage"
+
+
+let base='http://localhost:8081';
+
+// 自定义拦截器：response 响应码处理
+
+// 表单提交
+
+// get方法
+export const getRequest=(url,param)=>{
+	console.log(url)
+	return axios({
+		method:"get",
+		url:`${base}${url}`,
+		data:param
+	})
+};
+
+//post 方法
+export const postRequest=(url,param)=>{
+
+	return axios({
+		method:"post",
+		url:`${url}`,
+		data:param,
+    headers:{'content-type':'application/json;charset=UTF-8',
+    "Origin":'http-ota-j-pre.yaochufa.com'
+    }
+	})
+}
