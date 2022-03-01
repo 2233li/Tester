@@ -2,7 +2,7 @@
 	<div>
     <!-- 搜索框 -->
     <div>
-      <el-form :model="SearchFormData" :inline="true">
+      <el-form :model="SearchFormData"  :inline="true">
         <el-form-item label="系统名称">
           <el-select v-model="SearchFormData.testSystemId" clearable>
             <el-option v-for="item in EntityLists" :key="item.testSystemId" :label="item.testSystemName" :value="item.testSystemId" ></el-option>
@@ -134,7 +134,7 @@ export default {
     "testSystemName": "mag系统",
     "entityId": 3,
     "entityIdName": "实体名称",
-    "status": -1,
+    "status": 1,
     "modifyDate":"2022/01/12 17:08"
   }
 ]
