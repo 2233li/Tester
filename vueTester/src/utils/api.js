@@ -31,4 +31,18 @@ export const postRequest=(url,param)=>{
     "Origin":'http-ota-j-pre.yaochufa.com'
     }
 	})
+};
+
+//深拷贝
+export const deepcopy=(obj)=>{
+   let newObj = null
+      if (typeof obj === 'object' && obj !== null) {
+          newObj = obj instanceof Array ? [] : {}
+          for (let i in obj) {
+              newObj[i] = typeof obj[i] === 'object' ? copy(obj[i]) : obj[i]
+          }
+      } else {
+          newObj = obj
+      }
+      return newObj
 }

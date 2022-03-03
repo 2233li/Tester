@@ -47,17 +47,17 @@
     </div>
     <!-- 新增&编辑-->
     <div>
-      <el-dialog :visible.sync="dialogVisiable" @closed="beforeCloDialog"
+      <el-dialog :visible.sync="dialogVisiable" @closed="beforeCloDialog('systemConfig')"
                  title="新增&编辑">
-      <el-form label-width="80px" :model="systemConfig" :rules="systemConfigRules" ref="systemConfig">
+      <el-form label-width="80px" :model="systemConfig" ref="systemConfig" :rules="systemConfigRules" >
         <el-form-item label="系统id" v-if="systemConfig.systemId">
-          <el-input v-model="systemConfig.systemId"></el-input>
+          <el-input v-model="systemConfig.systemId" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="系统名称" prop="systemName">
           <el-input v-model="systemConfig.systemName"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="saveSystemConfig">保存</el-button>
+          <el-button type="primary" @click="saveSystemConfig('systemConfig')">保存</el-button>
           <el-button @click="dialogVisiable=false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -73,7 +73,7 @@
       systemLists:[{"systemId":1,"systemName":"mag","systemStatus":1}],
       systemConfig:{},
       systemConfigRules:{
-        systemName:[ { required: true, message: '请输入实体名称', trigger: 'blur' }]
+        systemName:[{required:true,message:"请输入系统名称",trigger:"blur"}]
       },
       dialogVisiable:false
     }},
@@ -101,17 +101,26 @@
         this.getSystemConfig()
       },
       // 保存数据
-      saveSystemConfig(){
-        console.log("保存数据")
+      saveSystemConfig(refName){
+        this.$refs[systemConfig].validate((valid)=>{
+          if(valid){
+            console.log("保存数据")
+            console.log(this.$refs)
+          }
+        })
+
       },
       // 关闭编辑框前回调
-      beforeCloDialog(){
+      beforeCloDialog(refName){
+        this.$refs[refName].resetFields();
         this.systemConfig={}
+
       },
       // 编辑
       editSystemConfig(index,row){
+        var newRowdata=this.deepcopy(row)
         this.dialogVisiable=true,
-        this.systemConfig=row
+        this.systemConfig=newRowdata
         },
       //失效系统配置
       delecteSystemconig(index,row){

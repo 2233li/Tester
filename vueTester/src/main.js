@@ -55,10 +55,12 @@ import {
 import 'element-ui/lib/theme-chalk/index.css';
 import {getRequest} from '@/utils/api'
 import {postRequest} from '@/utils/api'
+import {deepcopy} from '@/utils/api'
 
 Vue.prototype.$ELEMENT = {size: 'small', zIndex: 3000};
 Vue.prototype.getRequest=getRequest;
 Vue.prototype.postRequest=postRequest;
+Vue.prototype.deepcopy=deepcopy;
 Vue.use(Switch);
 Vue.use(CollapseItem);
 Vue.use(Radio);
