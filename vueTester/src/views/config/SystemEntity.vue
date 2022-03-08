@@ -1,149 +1,148 @@
 <template>
-	<div>
-    <!-- 搜索框 -->
+  <div>
+    <!--搜索框 -->
     <div>
-      <el-form :model="SearchFormData"  :inline="true">
-        <el-form-item label="系统名称">
-          <el-select v-model="SearchFormData.testSystemId" clearable>
-            <el-option v-for="item in EntityLists" :key="item.testSystemId" :label="item.testSystemName" :value="item.testSystemId" ></el-option>
-
+      <el-form :inline="true" :model="formSearch">
+        <el-form-item label="系统">
+          <el-select v-model="formSearch.systemId">
+            <el-option v-for="(item,index) in sysConfigLists" :label="item.systemName" :value="item.systemId" :key="item.systemId"></el-option>
           </el-select>
-
         </el-form-item>
-        <el-form-item label="实体id">
-          <el-input v-model="SearchFormData.entityId" placeholder="实体id"></el-input>
-        </el-form-item>
-        <el-form-item label="实体名称">
-          <el-input v-model="SearchFormData.entityName" placeholder="实体名称"></el-input>
+        <el-form-item label="实体">
+          <el-input v-model="formSearch.sysEntityName"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="SearchFormData.status" placeholder="系统状态">
-            <el-option label="生效" value="1"></el-option>
-            <el-option label="失效" value="-1"></el-option>
+          <el-select v-model="formSearch.status">
+            <el-option label="有效" value="1"></el-option>
+            <el-option label="无效" value="-1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item >
-          <el-button type="primary"> 查询</el-button>
+        <el-form-item>
+          <el-button type="primary" @click="getSysEntityList(true)" > 搜索</el-button>
+          <el-button type="info" @click="initialSearch()">重置</el-button>
         </el-form-item>
-
       </el-form>
     </div>
-   <!-- 新增按钮 -->
-    <div class="operation"><el-button type="info" plain @click="EditEntityDialogVisiable=true">新增</el-button></div>
 
-    <!-- 新增&编辑实体 -->
-   <el-dialog title="修改实体数据" :visible.sync="EditEntityDialogVisiable"
-    width="60%">
-    <el-form :model="Entity" ref="Entity" label-width="100px" :rules="EntityDataRule">
-      <el-form-item label="测试系统" prop="testSystemId">
-        <el-select v-model="Entity.testSystemId" >
-          <el-option v-for="item in EntityLists" :key="item.testSystemId" :label="item.testSystemName" :value="item.testSystemId"></el-option>
-          </el-select>
-      </el-form-item>
-      <el-form-item label="实体名称" prop="entityName">
-        <el-input v-model="Entity.entityName"></el-input>
-      </el-form-item>
-
-      <el-form-item label="实体反射" prop="EntityReflect">
-        <el-input v-model="Entity.EntityReflect"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="saveEntity('Entity')">保存</el-button>
-        <el-button @click="resetSaveEntityForm('Entity')" >取消</el-button>
-      </el-form-item>
-
-    </el-form>
-
-    </el-dialog>
-
-    <!-- 数据表单部分-->
+    <!--表格数据-->
     <div>
-      <el-table :data="EntityLists" border style="width: 100%;"
-          :header-cell-style="{color:'#333'}">
-        <el-table-column label="实体id" prop="entityId"></el-table-column>
-        <el-table-column label="系统名称" prop="testSystemName"></el-table-column>
-        <el-table-column label="实体名称" prop="entityIdName"></el-table-column>
-        <el-table-column label="修改时间" prop="modifyDate"></el-table-column>
-        <el-table-column label="状态" >
-            <div v-if="status===1">有效</div>
-            <div v-else> 失效</div>
+      <el-button type="info" plain  style="margin: 5px;" @click="dialogVisiable=true">新增</el-button>
+      <el-table :data="systemEntityLists" border>
+        <el-table-column label="系统" prop="sysName"></el-table-column>
+        <el-table-column label="实体" prop="sysEntiName"></el-table-column>
+        <el-table-column label="状态" prop="status">
+          <template slot-scope="scope">
+            <p v-if="scope.row.status==1">有效</p>
+            <p v-else>失效</p>
+          </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-          <el-button  type="primary" plain @click="Editentity(scope.$index,scope.row)">编辑</el-button>
-          <el-button type="danger" plain >删除</el-button>
+          <el-button type="primary" plain @click="editData(scope.$index,scope.row)">编辑</el-button>
+          <el-button type="danger" plain @click="delectData"  >删除</el-button>
           </template>
-        </el-table-column>
+         </el-table-column>
       </el-table>
     </div>
 
-	</div>
+    <!-- 分页-->
+    <div>
+      <el-pagination :page-size="formSearch.pageSize"
+                     :current-page="formSearch.currentPage"
+                     :total="totalData"
+                     @current-change="changePage"></el-pagination>
+    </div>
+    <!-- 新增&编辑-->
+    <el-dialog :visible.sync="dialogVisiable" @closed="afterDioClose('systemEntity')"
+               title="新增&编辑">
+      <el-form label-width="80px" :model="systemEntity" :rules="systemEntityRules" ref="systemEntity" >
+        <el-form-item label="系统" prop="systemId">
+         <el-select v-model="systemEntity.systemId">
+           <el-option v-for="(item,index) in sysConfigLists" :label="item.systemName" :value="item.systemId" :key="item.systemId"></el-option>
+         </el-select>
+        </el-form-item>
+        <el-form-item label="实体名称" prop="sysEntiName">
+          <el-input v-model="systemEntity.sysEntiName" ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="addEditData('systemEntity')" >保存</el-button>
+          <el-button type="info" @click="dialogVisiable=false" plain>取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
+
 
 </template>
 <script>
-export default {
-	name:"SystemEntity",
-	data(){
-		return {
-      EditEntityDialogVisiable:false,
-      SearchFormData:{},
-      EntityLists:[],
-      Entity:{},
-      EntityDataRule:{
-        entityName:[ { required: true, message: '请输入实体名称', trigger: 'blur' }],
-        EntityReflect:[{ required: true, message: '请输入实体反射', trigger: 'blur' }],
-        testSystemId:[{ required: true, message: '请选择测试系统', trigger: 'change' }]
+  export default{
+    name:"SystemEntity",
+    data(){return{
+      dialogVisiable:false,
+      formSearch:{status:"1",pageSize:2,currentPage:1}, // 搜索框数据
+      systemEntityLists:[{sysName:'mag系统',sysEntiName:'快手',status:'1',systemId:1}],// 数据列表数据
+      systemEntity:{},// 编辑&新增 数据对象
+      systemEntityRules:{
+        systemId:[{ required: true, message: '请选择测试系统', trigger: 'blur' }],
+        sysEntiName:[{ required: true, message: '请输入操作名称', trigger: 'blur' }]
+
+      },
+      totalData:0,
+      sysConfigLists:[{systemName:"mag",systemId:1}],// 搜索 系统下拉框数据
+
+    }},
+    created(){
+     this.getSystemConfigList();
+     this.getSysEntityList()
+    },
+    methods:{
+      //获取系统配置列表
+      getSystemConfigList(){
+        console.log("获取系统配置列表")
+      },
+      // 搜索数据列表 SystemEntity
+      getSysEntityList(isInitialPage){
+        console.log("获取数据列表")
+        this.totalData=30
+      },
+      // 重置搜索框
+      initialSearch(){
+        console.log(" // 重置搜索框")
+      },
+      // 失效数据
+      delectData(index,row){
+        console.log("失效数据")
+      },
+      // 编辑数据触发
+      editData(index,row){
+        var newRowData=this.deepcopy(row)
+        this.dialogVisiable=true
+        this.systemEntity=newRowData
+
+      },
+      // 新增&编辑数据
+      addEditData(refName){
+        this.$refs[refName].validate((valid)=>{
+           console.log("增&编辑数新据")
+        })
+
+
+      },
+      // 新增 编辑 关闭前回调
+      afterDioClose(refName){
+        this.systemEntity={}
+        this.$refs[refName].resetFields();// 关闭dialog 前，清除数据校验
+      },
+      // 分页
+      changePage(currentPage){
+        console.log("currentPage"+currentPage)
 
       }
-		};
-
-	},
-
-
-	methods:{
-
-    getEntityLists(){},
-
-    saveEntity(formName){
-      this.$refs[formName].validate((valid)=>{
-        if(valid){
-
-          console.log(JSON.stringify(this.EnditEntityForm))
-        }
-      })
-    },
-
-    resetSaveEntityForm(formName){
-      this.$refs[formName].resetFields();
-
-     this.EditEntityDialogVisiable=false;
-    },
-    Editentity(index,row){
-     this.EditEntityDialogVisiable=true;
-     this.EnditEntityForm=this.EntityLists[index]
-
 
     }
-
-	},
-  created:function(){
-    this.getEntityLists();
-    this.EntityLists=[
-  {
-    "testSystemId": 1,
-    "testSystemName": "mag系统",
-    "entityId": 3,
-    "entityIdName": "实体名称",
-    "status": 1,
-    "modifyDate":"2022/01/12 17:08"
   }
-]
-  }
-}
 </script>
 
 <style>
-  .operation{
-    margin-bottom: 10px;
-  }
+
 </style>

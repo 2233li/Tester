@@ -20,7 +20,7 @@
     </div>
     <!-- 数据列表框 -->
     <div>
-      <el-button type="info" @click="dialogVisiable=true" style="margin:5px;" >新增</el-button>
+      <el-button type="info" plain @click="dialogVisiable=true" style="margin:5px;" >新增</el-button>
       <el-table :data="systemLists" border>
         <el-table-column label="系统id" prop="systemId"></el-table-column>
         <el-table-column label="系统名称" prop="systemName"></el-table-column>
@@ -69,6 +69,7 @@
   export default{
     name:"Systemconfig",
     data(){return{
+      totalData:0,
       formSearch:{systemStatus:"1",currentPage:1,pagesize:2,},
       systemLists:[{"systemId":1,"systemName":"mag","systemStatus":1}],
       systemConfig:{},
@@ -85,7 +86,7 @@
       // 搜索配置数据
       getSystemConfig(isInitialPage){
         if(isInitialPage) this.formSearch.currentPage=1;
-
+        this.totalData=30;
         console.log(this.formSearch.currentPage)
 
       },
