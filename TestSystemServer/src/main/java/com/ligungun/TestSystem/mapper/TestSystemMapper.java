@@ -11,7 +11,6 @@ import com.ligungun.TestSystem.model.TestSystem;
 
 @Mapper
 public interface TestSystemMapper  {
-	@Select("select * from testsystem")
 	List<TestSystem> FindAll();
 	
 	

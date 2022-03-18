@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ligungun.TestSystem.model.TestSystem;
 import com.ligungun.TestSystem.service.TestSystemService;
+import com.ligungun.TestSystem.util.ResultData;
 
 
 @RestController
@@ -17,8 +18,13 @@ public class TestSystemController {
 	@Autowired
 	TestSystemService testSystemService;
 	
-	@RequestMapping("/findAll")
+	@RequestMapping("/getList")
 	public List<TestSystem> findAll(){
 		return testSystemService.findAll();
+	}
+	
+	@RequestMapping("/wula")
+	public ResultData<String> getStr(){
+		return ResultData.success("hello");
 	}
 }
