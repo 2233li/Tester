@@ -5,5 +5,19 @@
     <select id="FindAll"  resultType="com.ligungun.TestSystem.model.TestSystem">
         select * from `testsystem` 
     </select>
+	<select id="getCounts" resultType="Integer">
+		SELECT COUNT(testSystemId)  FROM testSystem
+	</select>
+	<select id="getTestSystems" resultType="com.ligungun.TestSystem.model.TestSystem" parameterType="map">
+		select * from `testsystem` where 1=1
+		<if test="testSystemName != null and testSystemName !='' ">
+			and testSystemName like '%${testSystemName}%'
+		</if>
+		<if test="status != null">
+			and status=${status}
+		</if>
+		limit ${offset},${rows}
+	</select>
+
 
 </mapper>
