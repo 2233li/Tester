@@ -21,4 +21,8 @@ public class TestSystemController {
 	public List<TestSystem> findAll(){
 		return testSystemService.findAll();
 	}
+	
+	//查询数据（分页、条件（系统名称、系统状态）
+	//新增数据
+	//失效数据
 }

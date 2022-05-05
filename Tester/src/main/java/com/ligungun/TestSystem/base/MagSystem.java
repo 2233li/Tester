@@ -19,7 +19,7 @@ import okhttp3.Interceptor.Chain;
 
 public class MagSystem extends TestSystem {
 	private static int logintimes=0;
-	public String hostString = "http://mag-test5.yaochufa.com";
+	public String hostString = "****";
 	public String loginUserString = "{\"ReturnUrl\":\"\",\"LoginAccount\":\"liyuan001\",\"Password\":\"ersansan@22\"}";
 	public Map<String, String> headMaps = new HashMap<String, String>() {
 		{
